@@ -224,3 +224,5 @@ elif page == "🔍 Predict Segment":
         st.info(f"**Profile:** {info['description']}")
         st.warning(f"**Recommendation:** {info['recommendation']}")
         st.markdown(f"**Debug — Cluster ID:** `{cluster}`")
+
+        # API feature - Day 2 practice
