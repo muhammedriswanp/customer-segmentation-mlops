@@ -226,3 +226,4 @@ elif page == "🔍 Predict Segment":
         st.markdown(f"**Debug — Cluster ID:** `{cluster}`")
 
         # API feature - Day 2 practice
+        print("Version from MAIN branch")
