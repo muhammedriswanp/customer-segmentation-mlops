@@ -5,4 +5,4 @@ df = run_pipeline(
     output_path='outputs/clusters/dataset_with_clusters.csv'
 )
 
-print("Main branch version")
+print("Main + Docker version")
