@@ -1,5 +1,6 @@
 import pandas as pd
 import mlflow
+import joblib
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from  preprocessing import preprocess
@@ -16,6 +17,9 @@ X_pca, pca = apply_pca(X_scaled)
 
 mlflow.set_experiment("customer-segmentation")
 
+best_score = -1     #silhouette score is always between -1 and 1
+best_model = None
+
 # Try different cluster counts
 for n in [2, 3, 4, 5]:
     for init in ['k-means++','random']:
@@ -25,6 +29,12 @@ for n in [2, 3, 4, 5]:
                 labels = model.fit_predict(X_pca)
 
                 score = silhouette_score(X_pca, labels)
+
+                if score > best_score:
+                    best_score = score
+                    best_model = model  # ← automatically updated!
+
+
 
                 mlflow.log_param("n_clusters", n)
                 mlflow.log_param("random_state", 42)
@@ -38,3 +48,7 @@ for n in [2, 3, 4, 5]:
                 print(f"k={n} → silhouette={score:.4f}, inertia={model.inertia_:.2f}")
 
 print("All runs logged!")
+
+# Save best model
+joblib.dump(best_model, 'models/best_kmeans_model.pkl')
+print(f"Best score: {best_score}")
