@@ -1,0 +1,23 @@
+artifact_path: file:D:/Bridgeon/TASK/customer-segmentation-mlops/mlruns/1/models/m-47f79d3d856743009e823f7eb3b8c960/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.14.0
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.8.0
+    skops_trusted_types: null
+mlflow_version: 3.10.1
+model_id: m-47f79d3d856743009e823f7eb3b8c960
+model_size_bytes: 9875
+model_uuid: m-47f79d3d856743009e823f7eb3b8c960
+prompts: null
+run_id: bd666fcb115943ae93142e8d91798cb8
+utc_time_created: '2026-03-25 08:51:30.832820'

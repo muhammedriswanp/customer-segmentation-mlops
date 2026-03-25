@@ -18,19 +18,23 @@ mlflow.set_experiment("customer-segmentation")
 
 # Try different cluster counts
 for n in [2, 3, 4, 5]:
-    with mlflow.start_run(run_name=f"kmeans-k{n}"): # with = "start something → do work → automatically close it when done"
-        model = KMeans(n_clusters=n, random_state=42, n_init=10)
-        labels = model.fit_predict(X_pca)
+    for init in ['k-means++','random']:
+        for max_iter in [100, 200, 300]:
+            with mlflow.start_run(run_name=f"kmeans-k{n}-{init}-iter{max_iter}"): # with = "start something → do work → automatically close it when done"
+                model = KMeans(n_clusters=n, random_state=42, n_init=10, max_iter=max_iter, init=init)
+                labels = model.fit_predict(X_pca)
 
-        score = silhouette_score(X_pca, labels)
+                score = silhouette_score(X_pca, labels)
 
-        mlflow.log_param("n_clusters", n)
-        mlflow.log_param("random_state", 42)
-        mlflow.log_metric("silhouette_score", round(score, 4))
-        mlflow.log_metric("inertia", round(model.inertia_, 2))
+                mlflow.log_param("n_clusters", n)
+                mlflow.log_param("random_state", 42)
+                mlflow.log_param("init",init)
+                mlflow.log_param("max_iter",max_iter)
+                mlflow.log_metric("silhouette_score", round(score, 4))
+                mlflow.log_metric("inertia", round(model.inertia_, 2))
 
-        mlflow.sklearn.log_model(model, "kmeans_model")
+                mlflow.sklearn.log_model(model, "kmeans_model")
 
-        print(f"k={n} → silhouette={score:.4f}, inertia={model.inertia_:.2f}")
+                print(f"k={n} → silhouette={score:.4f}, inertia={model.inertia_:.2f}")
 
 print("All runs logged!")
