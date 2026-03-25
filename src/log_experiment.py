@@ -2,6 +2,7 @@ import pandas as pd
 import mlflow
 import joblib
 from sklearn.cluster import KMeans
+from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import silhouette_score
 from  preprocessing import preprocess
 from feature_engineering import engineer_features, scale_features
@@ -47,8 +48,28 @@ for n in [2, 3, 4, 5]:
 
                 print(f"k={n} → silhouette={score:.4f}, inertia={model.inertia_:.2f}")
 
+for n in [2,3,4,5]:
+    for linkage in ['ward', 'complete', 'average']:
+        with mlflow.start_run(run_name=f"AgglomerativeClustering-k{n}-linkage{linkage}"):
+            model = AgglomerativeClustering(n_clusters=n, linkage=linkage)
+            labels = model.fit_predict(X_pca)
+            score = silhouette_score(X_pca, labels)
+
+            if score > best_score :
+                best_score = score
+                best_model = model
+
+            mlflow.log_param("n_clusters", n)
+            mlflow.log_param("linkage",linkage)
+            mlflow.log_metric("silhouette_score", round(score, 5))
+            
+            mlflow.sklearn.log_model(model,"AgglomerativeClustering")
+
+            print(f"k={n} → silhouette={score:.4f}")
+
+
 print("All runs logged!")
 
 # Save best model
-joblib.dump(best_model, 'models/best_kmeans_model.pkl')
+joblib.dump(best_model, 'models/best_model.pkl')
 print(f"Best score: {best_score}")

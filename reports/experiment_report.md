@@ -2,49 +2,103 @@
 
 ## Experiment: customer-segmentation
 
-## Runs Summary
-| Run      | n_clusters | silhouette | inertia  |
-|----------|------------|------------|----------|
-| kmeans-k2 | 2         | 0.2859     | 34027.15 |
-| kmeans-k3 | 3         | 0.1998     | 30243.64 |
-| kmeans-k4 | 4         | 0.1561     | 28671.24 |
-| kmeans-k5 | 5         | 0.1618     | 27240.97 |
+---
 
-## Best Run
-- **Run:** kmeans-k2
-- **Silhouette Score:** 0.2859 (higher = better)
-- **Inertia:** 34027.15
+## Objective
+To find the optimal clustering strategy using:
+- KMeans
+- Agglomerative Clustering
 
-## Conclusion
-k=2 gives best cluster separation.
-However project uses k=3 for business interpretability.
+Evaluation Metric:
+- Silhouette Score (higher is better)
 
-## Experiment 2 - Parameter Tuning
+---
+
+## Experiment 1: KMeans Baseline
+
+### Parameters Tested
+- n_clusters: [2, 3, 4, 5]
+
+### Results
+
+| n_clusters | Silhouette Score | Inertia   |
+|------------|------------------|----------|
+| 2          | 0.2859           | 34027.15 |
+| 3          | 0.1998           | 30243.64 |
+| 4          | 0.1561           | 28671.24 |
+| 5          | 0.1618           | 27240.97 |
+
+### Conclusion
+- Best performance at k = 2
+- However, k = 3 chosen for business interpretability
+
+---
+
+## Experiment 2: KMeans Hyperparameter Tuning
 
 ### Parameters Tested
 - n_clusters: [2, 3, 4, 5]
 - init: ['k-means++', 'random']
 - max_iter: [100, 200, 300]
-- Total runs: 24
 
-### Key Findings
+### Key Observations
 
-**max_iter:**
-- Did not affect results
-- Model converged before 100 iterations
-- Use iter=100 to save time
+#### max_iter
+- No impact on results
+- Model converged early
+- Recommended: max_iter = 100
 
-**init:**
-- For k=2 and k=3 → no difference
-- For k=4 → random (0.2058) beat k-means++ (0.1561)
+#### init
+- No difference for k=2, k=3
+- For k=4 → random performed better
+
+---
+
+## Experiment 3: Agglomerative Clustering
+
+### Parameters Tested
+- n_clusters: [2, 3, 4, 5]
+- linkage: ['ward', 'complete', 'average']
 
 ### Results Summary
-| Run | silhouette |
-|-----|------------|
-| k=2, any init, iter=100 | 0.2859 |
-| k=4, random, iter=100   | 0.2058 |
-| k=3, k-means++, iter=100| 0.1998 |
 
-### Final Recommendation
-- Mathematically → k=2, any init, iter=100
-- Business wise  → k=3, k-means++, iter=100
+| n_clusters | linkage   | Silhouette Score |
+|------------|----------|------------------|
+| 2          | average  | 0.4857 |
+| 3          | average  | 0.3718 |
+| 4          | complete | 0.2728 |
+| 5          | average  | 0.2155 |
+
+---
+
+## Best Model Overall
+
+- Model: Agglomerative Clustering  
+- n_clusters: 2  
+- linkage: average  
+- Silhouette Score: 0.4857  
+
+---
+
+## Final Decision
+
+| Perspective | Model |
+|------------|------|
+| Mathematical Best | Agglomerative (k=2, avg) |
+| Business Friendly | KMeans (k=3, k-means++) |
+
+---
+
+## Final Recommendation
+
+- Use KMeans (k=3) for interpretability  
+- Use Agglomerative (k=2) for performance benchmarking  
+
+---
+
+## Output
+
+- Best model saved at:  
+  models/best_model.pkl  
+
+- All runs tracked in MLflow UI
