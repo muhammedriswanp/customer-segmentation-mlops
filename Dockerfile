@@ -1,3 +1,5 @@
+# Docker v2 - improved version
+
 # Step 1 — Base image (Python version)
 FROM python:3.11-slim
 
