@@ -41,10 +41,11 @@ for n in [2, 3, 4, 5]:
                 mlflow.log_param("random_state", 42)
                 mlflow.log_param("init",init)
                 mlflow.log_param("max_iter",max_iter)
+
                 mlflow.log_metric("silhouette_score", round(score, 4))
                 mlflow.log_metric("inertia", round(model.inertia_, 2))
 
-                mlflow.sklearn.log_model(model, "kmeans_model")
+                mlflow.sklearn.log_model(model, "kmeans_model")#artifact_path='kmeans_model'
 
                 print(f"k={n} → silhouette={score:.4f}, inertia={model.inertia_:.2f}")
 
