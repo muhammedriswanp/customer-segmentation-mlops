@@ -2,7 +2,7 @@ import pandas as pd
 import os
 from src.preprocessing import preprocess
 from src.feature_engineering import engineer_features, scale_features
-from src.clustering import apply_pca, run_kmeans
+from src.clustering import apply_pca
 import joblib
 
 
@@ -27,13 +27,15 @@ def run_pipeline(input_path, output_path):
     X_pca, pca = apply_pca(X_scaled)
 
     print("Clustering...")
-    model, labels = run_kmeans(X_pca, n_clusters=3)
-    df['KMeans_Cluster'] = labels
+    model = joblib.load('models/best_model.pkl')
+    labels = model.fit_predict(X_pca)
+
+    df['Cluster'] = labels
 
     print("Saving models...")
     joblib.dump(scaler, 'outputs/models/scaler.pkl')
     joblib.dump(pca, "outputs/models/pca.pkl")
-    joblib.dump(model, "outputs/models/kmeans_model.pkl")
+    joblib.dump(model, "outputs/models/best_model.pkl")
 
     print("Saving results...")
     df.to_csv(output_path, index=False)
