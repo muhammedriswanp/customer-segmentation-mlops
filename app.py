@@ -8,7 +8,7 @@ import seaborn as sns
 # ── Load saved models ──────────────────────────
 scaler = joblib.load('outputs/models/scaler.pkl')
 pca    = joblib.load('outputs/models/pca.pkl')
-model  = joblib.load('outputs/models/kmeans_model.pkl')
+model = joblib.load('models/kmeans_model.pkl')
 df     = pd.read_csv('outputs/clusters/dataset_with_clusters.csv')
 
 # ── Cluster info ───────────────────────────────
@@ -225,5 +225,40 @@ elif page == "🔍 Predict Segment":
         st.warning(f"**Recommendation:** {info['recommendation']}")
         st.markdown(f"**Debug — Cluster ID:** `{cluster}`")
 
-        # API feature - Day 2 practice
+        # ── Flask API call ──
+        st.subheader("🔌 Flask API Response")
+        try:
+            import requests
+            api_payload = {
+                "income": int(income),
+                "recency": int(recency),
+                "age": int(age),
+                "total_children": int(total_children),
+                "tenure_days": int(tenure_days),
+                "mnt_wines": int(mnt_wines),
+                "mnt_fruits": int(mnt_fruits),
+                "mnt_meat": int(mnt_meat),
+                "mnt_fish": int(mnt_fish),
+                "mnt_sweet": int(mnt_sweet),
+                "mnt_gold": int(mnt_gold),
+                "num_web_purchases": int(num_web_purchases),
+                "num_store_purchases": int(num_store_purchases),
+                "num_catalog": int(num_catalog),
+                "num_deals": int(num_deals),
+                "num_web_visits": int(num_web_visits),
+                "campaigns_accepted": int(campaigns_accepted)
+            }
+            response = requests.post(
+                "http://127.0.0.1:5000/predict",
+                json=api_payload
+            )
+            if response.status_code == 200:
+                api_result = response.json()
+                st.success(f"API Cluster: {api_result['cluster_id']} — {api_result['segment_name']}")
+                st.json(api_result)
+            else:
+                st.error(f"API Error: {response.status_code}")
+        except Exception as e:
+            st.warning(f"⚠️ Flask API not running: {e}")
+
 print("Version from MAIN + API branch")
