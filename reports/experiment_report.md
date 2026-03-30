@@ -123,3 +123,20 @@ Evaluation Metric:
   causing server restarts mid-request. Fixed with use_reloader=False.
 - scaler.transform() returns numpy array; PCA needs named DataFrame to avoid
   feature name warning. Fixed by wrapping scaled output in pd.DataFrame.
+
+
+  ## Day 7 - Input Validation & Error Handling
+
+  ### Validation Levels
+  - Level 1: Key validation — checks all required fields exist
+  - Level 2: Type validation — checks all fields are numbers
+  - Level 3: Range validation — checks values are within realistic ranges
+
+  ### Test Results
+  |Test |Input |Expected |Result |
+  |------|-------|----------|--------|
+  | Missing field | no income | 400 Missing field: 'income' | ✅ |
+  | Wrong type | income: "seventy five thousand" | 400 must be a number, got str | ✅ |
+  | Out of range | age: 200 | 400 must be between 18 and 100 | ✅ |
+  | Valid input | all correct | 200 cluster_id: 1 | ✅ |
+
