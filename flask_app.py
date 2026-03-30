@@ -10,7 +10,6 @@ scaler = joblib.load("models/scaler.pkl")
 pca    = joblib.load("models/pca.pkl")
 model  = joblib.load("models/kmeans_model.pkl")
 
-# This will print the ACTUAL model class name — confirms what was loaded
 print(f"[INFO] Loaded model: {type(model).__name__}")
 
 FEATURE_COLUMNS = [

@@ -1,5 +1,0 @@
-outs:
-- md5: e1c34ef7d1ba03f7e446d536e316362f
-  size: 53623
-  hash: md5
-  path: best_kmeans_model.pkl

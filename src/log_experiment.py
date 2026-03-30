@@ -25,7 +25,7 @@ best_model = None
 for n in [2, 3, 4, 5]:
     for init in ['k-means++','random']:
         for max_iter in [100, 200, 300]:
-            with mlflow.start_run(run_name=f"kmeans-k{n}-{init}-iter{max_iter}"): # with = "start something → do work → automatically close it when done"
+            with mlflow.start_run(run_name=f"kmeans-k{n}-{init}-iter{max_iter}"): 
                 model = KMeans(n_clusters=n, random_state=42, n_init=10, max_iter=max_iter, init=init)
                 labels = model.fit_predict(X_pca)
 
