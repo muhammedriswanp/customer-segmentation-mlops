@@ -102,3 +102,24 @@ Evaluation Metric:
   models/best_model.pkl  
 
 - All runs tracked in MLflow UI
+
+## Day 6 — Flask API
+
+**Endpoint:** POST /predict  
+**Model loaded:** KMeans k=3 (models/kmeans_model.pkl)  
+**Pipeline:** scaler → PCA → KMeans.predict()
+
+**Sample request:**
+{"income": 75000, "recency": 20, "age": 45, ...}
+
+**Sample response:**
+{"cluster_id": 1, "segment_name": "High Value Loyalists", "derived": {...}}
+
+**Lessons learned:**
+- best_model.pkl and best_kmeans_model.pkl both contained Agglomerative
+  because log_experiment.py picks by silhouette score across all models.
+  KMeans k=3 was in kmeans_model.pkl — filename did not match content.
+- debug=True with watchdog monitors all file changes including site-packages,
+  causing server restarts mid-request. Fixed with use_reloader=False.
+- scaler.transform() returns numpy array; PCA needs named DataFrame to avoid
+  feature name warning. Fixed by wrapping scaled output in pd.DataFrame.
