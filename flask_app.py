@@ -31,6 +31,67 @@ CLUSTER_INFO = {
     2: "Middle Class Actives"
 }
 
+def validate_input(data):
+    # ── Level 1: Key validation (already have this, moving into function) ──
+    required = [
+        "income", "recency", "age", "total_children", "tenure_days",
+        "mnt_wines", "mnt_fruits", "mnt_meat", "mnt_fish", "mnt_sweet", "mnt_gold",
+        "num_web_purchases", "num_store_purchases", "num_catalog", "num_deals",
+        "num_web_visits", "campaigns_accepted"
+    ]
+
+    for key in required:
+        if key not in data:
+            return f"Missing field: '{key}'"
+        
+    # ── Level 2: Type validation ──
+    int_fields = [
+        "recency", "age", "total_children", "tenure_days",
+        "num_web_purchases", "num_store_purchases", "num_catalog",
+        "num_deals", "num_web_visits", "campaigns_accepted"
+    ]
+
+    float_fields = [
+        "income", "mnt_wines", "mnt_fruits", "mnt_meat",
+        "mnt_fish", "mnt_sweet", "mnt_gold"
+    ]
+
+    for field in int_fields:
+        if not isinstance(data[field], (int, float)):
+            return f"'{field}' must be a number, got {type(data[field]).__name__}"
+        
+    for field in float_fields:
+        if not isinstance(data[field], (int, float)):
+            return f"'{field}' must be a number, got {type(data[field]).__name__}"
+        
+    # ── Level 3: Range validation ──
+    ranges = {
+    "income":              (0,    200000),  
+    "age":                 (18,   100),
+    "recency":             (0,    99),      
+    "total_children":      (0,    5),
+    "tenure_days":         (0,    700),     
+    "mnt_wines":           (0,    1500),
+    "mnt_fruits":          (0,    200),
+    "mnt_meat":            (0,    1500),
+    "mnt_fish":            (0,    300),
+    "mnt_sweet":           (0,    300),
+    "mnt_gold":            (0,    400),
+    "num_web_purchases":   (0,    27),     
+    "num_store_purchases": (0,    20),
+    "num_catalog":         (0,    30),
+    "num_deals":           (0,    15),
+    "num_web_visits":      (0,    20),
+    "campaigns_accepted":  (0,    6),
+
+    }
+
+    for field, (min_val, max_val) in ranges.items():
+        value = data[field]
+        if value < min_val or value > max_val:
+            return f"'{field}' must be between {min_val} and {max_val}, got {value}"
+        
+    return None     # ← None means no error, everything is valid
 
 @app.route("/", methods=["GET"])
 def health():
@@ -46,16 +107,12 @@ def predict():
 
     if data is None:
         return jsonify({"error": "Request body must be JSON"}), 400
+    
+    # ── Run all validations ──
+    error = validate_input(data)
+    if error :
+        return jsonify({"error": error}), 400
 
-    required = [
-        "income", "recency", "age", "total_children", "tenure_days",
-        "mnt_wines", "mnt_fruits", "mnt_meat", "mnt_fish", "mnt_sweet", "mnt_gold",
-        "num_web_purchases", "num_store_purchases", "num_catalog", "num_deals",
-        "num_web_visits", "campaigns_accepted"
-    ]
-    for key in required:
-        if key not in data:
-            return jsonify({"error": f"Missing field: '{key}'"}), 400
 
     # ── Extract raw values ──
     mnt_wines   = data["mnt_wines"]
