@@ -156,3 +156,25 @@ Evaluation Metric:
 | test_api.py | 1 | High Value Loyalists | 53.12 |
 
 All three match ✅
+
+
+## Day 9 — CI Basics
+
+**Workflow file:** .github/workflows/ci.yml
+**Trigger:** push to main branch
+
+**Steps:**
+1. Checkout code
+2. Build Docker image (customer-segmentation-api)
+3. Start Flask container with volume mount
+4. Run test_api.py → verifies /predict endpoint
+5. Stop container
+
+**Issues fixed:**
+- actions/checkout@v3 → updated to v4
+- sleep 5 → increased to sleep 15 (Flask needs more startup time)
+- Model files added to Git (-f flag) for CI runner access
+  (DVC remote is local — not accessible from GitHub runner)
+
+**Result:** CI pipeline passes on every push to main ✅
+
