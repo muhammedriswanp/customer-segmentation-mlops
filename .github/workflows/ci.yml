@@ -13,8 +13,7 @@ jobs:
     steps:
       # Step 1 — Get your code
       - name: Checkout code
-        uses: actions/checkout@v3
-        # GitHub's official action that downloads  repository code onto the runner machine.
+        uses: actions/checkout@v4
 
       # Step 2 — Build Docker image
       - name: Build Docker image
@@ -28,14 +27,13 @@ jobs:
             -p 5000:5000 \
             --name flask-api \
             customer-segmentation-api
-          sleep 5
-        #run in background (detached mode, -d)
+          sleep 15
 
       # Step 4 — Install requests library
       - name: Install test dependencies
         run: pip install requests
 
-      # Step 5 — Run test
+      # Step 5 — Run API test
       - name: Run API test
         run: python test_api.py
 
