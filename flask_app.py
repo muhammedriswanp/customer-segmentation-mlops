@@ -31,7 +31,7 @@ CLUSTER_INFO = {
 }
 
 def validate_input(data):
-    # ── Level 1: Key validation (already have this, moving into function) ──
+    # ── Level 1: Key validation  ──
     required = [
         "income", "recency", "age", "total_children", "tenure_days",
         "mnt_wines", "mnt_fruits", "mnt_meat", "mnt_fish", "mnt_sweet", "mnt_gold",
@@ -44,25 +44,28 @@ def validate_input(data):
             return f"Missing field: '{key}'"
         
     # ── Level 2: Type validation ──
-    int_fields = [
-        "recency", "age", "total_children", "tenure_days",
-        "num_web_purchases", "num_store_purchases", "num_catalog",
-        "num_deals", "num_web_visits", "campaigns_accepted"
-    ]
+    all_fields = [
+    "income", "recency", "age", "total_children", "tenure_days",
+    "mnt_wines", "mnt_fruits", "mnt_meat", "mnt_fish", "mnt_sweet", "mnt_gold",
+    "num_web_purchases", "num_store_purchases", "num_catalog", "num_deals",
+    "num_web_visits", "campaigns_accepted"]
 
-    float_fields = [
-        "income", "mnt_wines", "mnt_fruits", "mnt_meat",
-        "mnt_fish", "mnt_sweet", "mnt_gold"
-    ]
-
-    for field in int_fields:
+    for field in all_fields:
         if not isinstance(data[field], (int, float)):
             return f"'{field}' must be a number, got {type(data[field]).__name__}"
-        
-    for field in float_fields:
-        if not isinstance(data[field], (int, float)):
-            return f"'{field}' must be a number, got {type(data[field]).__name__}"
-        
+
+    # ── Level 2.5: Integer check for whole-number fields ──
+    whole_number_fields = [
+    "total_children", "campaigns_accepted",
+    "num_web_purchases", "num_store_purchases",
+    "num_catalog", "num_deals", "num_web_visits",
+    "recency", "age", "tenure_days"
+    ]
+
+    for field in whole_number_fields:
+        if isinstance(data[field], float) and not data[field].is_integer():
+            return f"'{field}' must be a whole number, got {data[field]}"
+
     # ── Level 3: Range validation ──
     ranges = {
     "income":              (0,    200000),  

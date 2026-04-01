@@ -18,3 +18,14 @@ COPY main.py .
 
 # Step 6 — Default command
 CMD ["python", "main.py"]
+
+
+# docker build -t customer-segmentation .           Step 1 — BUILD (reads Dockerfile, creates image, saves it)
+# docker run customer-segmentation                  Step 2 — RUN (takes saved image, starts a container from it)
+# docker run -v local_path:container_path image_name
+
+# docker run `
+#   -v "${PWD}/data:/app/data" `
+#   -v "${PWD}/models:/app/models" `
+#   -v "${PWD}/outputs:/app/outputs" `
+#   customer-segmentation

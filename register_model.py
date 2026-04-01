@@ -1,7 +1,12 @@
+# register_model.py
+# Automatically finds the best model from MLflow experiments
+# and registers it to MLflow Model Registry with 'champion' alias.
+# Run this after log_experiment.py to update the registry.
+
 import mlflow
 from mlflow.tracking import MlflowClient
 
-mlflow.set_tracking_uri("sqlite:///mlflow.db")  # ← use database
+mlflow.set_tracking_uri("sqlite:///mlflow.db")
 client = MlflowClient()
 
 # Find best run
@@ -17,7 +22,7 @@ print(f"Best run ID : {best_run.info.run_id}")
 print(f"Best score  : {best_run.data.metrics['silhouette_score']}")
 print(f"Params      : {best_run.data.params}")
 
-# Register using run artifact URI
+# Register model
 model_uri = f"runs:/{best_run.info.run_id}/AgglomerativeClustering"
 result = mlflow.register_model(
     model_uri=model_uri,
@@ -28,11 +33,11 @@ print(f"\nModel registered!")
 print(f"Name   : {result.name}")
 print(f"Version: {result.version}")
 
-# python -c "
-# import mlflow
-# mlflow.set_tracking_uri('sqlite:///mlflow.db')
-# result = mlflow.register_model(
-#     'runs:/01603c5d655f4e78b00890f023b4ac27/kmeans_model',
-#     'customer-segmentation'
-# )
-# print('Version:', result.version)
+# ── Set champion alias ──
+client.set_registered_model_alias(
+    name="customer-segmentation",
+    alias="champion",
+    version=result.version
+)
+
+print(f"Alias 'champion' set on version {result.version} ✅")

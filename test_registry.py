@@ -1,3 +1,5 @@
+# Loads model from MLflow Registry (not from file path)
+
 import mlflow
 
 mlflow.set_tracking_uri("sqlite:///mlflow.db")

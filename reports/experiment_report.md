@@ -140,3 +140,19 @@ Evaluation Metric:
   | Out of range | age: 200 | 400 must be between 18 and 100 | ✅ |
   | Valid input | all correct | 200 cluster_id: 1 | ✅ |
 
+## Day 8 — Dockerize Flask API
+
+**Dockerfile:** Dockerfile.flask
+**Image:** customer-segmentation-api
+**Volume mount:** models/ → /app/models
+**Port:** 5000:5000
+
+**Predictions verified:**
+
+| Source | cluster_id | segment_name | spending_per_purchase |
+|--------|------------|--------------|----------------------|
+| Local Flask | 1 | High Value Loyalists | 53.12 |
+| Docker container | 1 | High Value Loyalists | 53.12 |
+| test_api.py | 1 | High Value Loyalists | 53.12 |
+
+All three match ✅
