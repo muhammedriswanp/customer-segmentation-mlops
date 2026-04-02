@@ -125,20 +125,20 @@ Evaluation Metric:
   feature name warning. Fixed by wrapping scaled output in pd.DataFrame.
 
 
-  ## Day 7 - Input Validation & Error Handling
+## Day 7 - Input Validation & Error Handling
 
-  ### Validation Levels
-  - Level 1: Key validation — checks all required fields exist
-  - Level 2: Type validation — checks all fields are numbers
-  - Level 3: Range validation — checks values are within realistic ranges
+### Validation Levels
+- Level 1: Key validation — checks all required fields exist
+- Level 2: Type validation — checks all fields are numbers
+- Level 3: Range validation — checks values are within realistic ranges
 
-  ### Test Results
-  |Test |Input |Expected |Result |
-  |------|-------|----------|--------|
-  | Missing field | no income | 400 Missing field: 'income' | ✅ |
-  | Wrong type | income: "seventy five thousand" | 400 must be a number, got str | ✅ |
-  | Out of range | age: 200 | 400 must be between 18 and 100 | ✅ |
-  | Valid input | all correct | 200 cluster_id: 1 | ✅ |
+### Test Results
+|Test |Input |Expected |Result |
+|------|-------|----------|--------|
+| Missing field | no income | 400 Missing field: 'income' | ✅ |
+| Wrong type | income: "seventy five thousand" | 400 must be a number, got str | ✅ |
+| Out of range | age: 200 | 400 must be between 18 and 100 | ✅ |
+| Valid input | all correct | 200 cluster_id: 1 | ✅ |
 
 ## Day 8 — Dockerize Flask API
 
@@ -177,4 +177,90 @@ All three match ✅
   (DVC remote is local — not accessible from GitHub runner)
 
 **Result:** CI pipeline passes on every push to main ✅
+
+# Day 10 - End-to-End Local Integration Report 
+
+## Objective 
+Verify that the full pipeline works consistently across local Flask and Docker environments.
+
+## Pipeline Overview 
+```
+Input JSON → Flask API (/predict) → Model (KMeans k=3) → Prediction Response
+```
+
+## Test 1 – Local Flask API
+- Command: `python flask_app.py`
+- Tested via: Postman
+- Endpoint: `http://localhost:5000/predict`
+
+**Sample Input:**
+```json
+{
+    "income": 7500,
+    "recency": 20,
+    "age": 45,
+    "total_children": 1,
+    "tenure_days": 400,
+    "mnt_wines": 500,
+    "mnt_fruits": 30,
+    "mnt_meat": 200,
+    "mnt_fish": 40,
+    "mnt_sweet": 20,
+    "mnt_gold": 60,
+    "num_web_purchases": 6,
+    "num_store_purchases": 5,
+    "num_catalog": 3,
+    "num_deals": 1,
+    "num_web_visits": 4,
+    "campaigns_accepted": 2
+}
+```
+
+**Response:**
+```json
+{
+    "cluster_id": 2,
+    "derived": {
+        "spending_per_purchase": 53.12,
+        "total_purchases": 15,
+        "total_spending": 850
+    },
+    "segment_name": "Middle Class Actives"
+}
+```
+**Status: ✅ PASS**
+
+---
+## Test 2 – Docker Container
+- Command: `docker run -v ${PWD}/models:/app/models -p 5000:5000 customer-segmentation-api`
+- Tested via: Postman
+- Endpoint: `http://localhost:5000/predict`
+
+**Response:**
+```json
+{
+    "cluster_id": 2,
+    "derived": {
+        "spending_per_purchase": 53.12,
+        "total_purchases": 15,
+        "total_spending": 850
+    },
+    "segment_name": "Middle Class Actives"
+}
+```
+**Status: ✅ PASS**
+
+---
+
+## Consistency Check
+| Environment   | cluster_id | segment_name           | Match |
+|---------------|------------|------------------------|-------|
+| Local Flask   | 2          | Middle Class Actives   | ✅    |
+| Docker        | 2          | Middle Class Actives   | ✅    |
+
+## Conclusion
+Full pipeline verified. Predictions are consistent across both environments.
+Model loads correctly inside Docker via volume mount.
+Week 2 MLOps objectives complete.
+
 

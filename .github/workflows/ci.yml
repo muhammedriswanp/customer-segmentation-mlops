@@ -14,6 +14,7 @@ jobs:
       # Step 1 — Get your code
       - name: Checkout code
         uses: actions/checkout@v4
+        # GitHub's official action that downloads repository code onto the runner machine.
 
       # Step 2 — Build Docker image
       - name: Build Docker image
