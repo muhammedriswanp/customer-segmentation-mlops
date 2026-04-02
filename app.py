@@ -50,7 +50,7 @@ if page == "📊 Cluster Overview":
 
     # ── Cluster sizes ──
     st.subheader("Cluster Sizes")
-    counts = df['KMeans_Cluster'].value_counts().sort_index()
+    counts = df['Cluster'].value_counts().sort_index()
     col1, col2 = st.columns(2)
 
     with col1:
@@ -72,7 +72,7 @@ if page == "📊 Cluster Overview":
 
     # ── Key metrics ──
     st.subheader("Key Metrics per Cluster")
-    profile = df.groupby('KMeans_Cluster').agg({
+    profile = df.groupby('Cluster').agg({
         'Income': 'mean',
         'Total_Spending': 'mean',
         'Total_Children': 'mean',
@@ -105,7 +105,7 @@ elif page == "🔬 Feature Analysis":
     with col1:
         fig, ax = plt.subplots(figsize=(6, 4))
         for cluster_id, color in zip([0, 1, 2], cluster_colors):
-            subset = df[df['KMeans_Cluster'] == cluster_id][feature]
+            subset = df[df['Cluster'] == cluster_id][feature]
             sns.kdeplot(subset, ax=ax, color=color, 
                         label=clean_names[cluster_id], 
                         fill=True, alpha=0.4, linewidth=2)
@@ -121,7 +121,7 @@ elif page == "🔬 Feature Analysis":
     # ── Box plot ──
     with col2:
         fig, ax = plt.subplots(figsize=(6, 4))
-        data_per_cluster = [df[df['KMeans_Cluster'] == i][feature].values for i in [0, 1, 2]]
+        data_per_cluster = [df[df['Cluster'] == i][feature].values for i in [0, 1, 2]]
         bp = ax.boxplot(data_per_cluster, patch_artist=True,
                         medianprops=dict(color='black', linewidth=2))
         for patch, color in zip(bp['boxes'], cluster_colors):
@@ -134,7 +134,7 @@ elif page == "🔬 Feature Analysis":
 
     # ── Average bar chart ──
     st.subheader(f"Average {feature} per Cluster")
-    means = df.groupby('KMeans_Cluster')[feature].mean().round(2)
+    means = df.groupby('Cluster')[feature].mean().round(2)
     fig3, ax3 = plt.subplots(figsize=(7, 3))
     bars = ax3.bar(
         ["Budget Conscious\nFamilies", "High Value\nLoyalists", "Middle Class\nActives"],
