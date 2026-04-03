@@ -1,5 +1,4 @@
 from src.pipeline import run_pipeline
-# main.py
 import os
 
 input_file = os.getenv('INPUT_FILE', 'marketing_campaign.csv')  # default fallback
