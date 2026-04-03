@@ -36,7 +36,8 @@ def validate_input(data):
         "income", "recency", "age", "total_children", "tenure_days",
         "mnt_wines", "mnt_fruits", "mnt_meat", "mnt_fish", "mnt_sweet", "mnt_gold",
         "num_web_purchases", "num_store_purchases", "num_catalog", "num_deals",
-        "num_web_visits", "campaigns_accepted"
+        "num_web_visits", "campaigns_accepted",
+        "marital_status", "education_group"  # ← ADDED
     ]
 
     for key in required:
@@ -44,22 +45,30 @@ def validate_input(data):
             return f"Missing field: '{key}'"
         
     # ── Level 2: Type validation ──
-    all_fields = [
-    "income", "recency", "age", "total_children", "tenure_days",
-    "mnt_wines", "mnt_fruits", "mnt_meat", "mnt_fish", "mnt_sweet", "mnt_gold",
-    "num_web_purchases", "num_store_purchases", "num_catalog", "num_deals",
-    "num_web_visits", "campaigns_accepted"]
+    # Numeric fields
+    numeric_fields = [
+        "income", "recency", "age", "total_children", "tenure_days",
+        "mnt_wines", "mnt_fruits", "mnt_meat", "mnt_fish", "mnt_sweet", "mnt_gold",
+        "num_web_purchases", "num_store_purchases", "num_catalog", "num_deals",
+        "num_web_visits", "campaigns_accepted"
+    ]
 
-    for field in all_fields:
+    for field in numeric_fields:
         if not isinstance(data[field], (int, float)):
             return f"'{field}' must be a number, got {type(data[field]).__name__}"
 
+    # Categorical fields
+    categorical_fields = ["marital_status", "education_group"]
+    for field in categorical_fields:
+        if not isinstance(data[field], str):
+            return f"'{field}' must be a string, got {type(data[field]).__name__}"
+
     # ── Level 2.5: Integer check for whole-number fields ──
     whole_number_fields = [
-    "total_children", "campaigns_accepted",
-    "num_web_purchases", "num_store_purchases",
-    "num_catalog", "num_deals", "num_web_visits",
-    "recency", "age", "tenure_days"
+        "total_children", "campaigns_accepted",
+        "num_web_purchases", "num_store_purchases",
+        "num_catalog", "num_deals", "num_web_visits",
+        "recency", "age", "tenure_days"
     ]
 
     for field in whole_number_fields:
@@ -68,32 +77,42 @@ def validate_input(data):
 
     # ── Level 3: Range validation ──
     ranges = {
-    "income":              (0,    200000),  
-    "age":                 (18,   100),
-    "recency":             (0,    99),      
-    "total_children":      (0,    5),
-    "tenure_days":         (0,    700),     
-    "mnt_wines":           (0,    1500),
-    "mnt_fruits":          (0,    200),
-    "mnt_meat":            (0,    1500),
-    "mnt_fish":            (0,    300),
-    "mnt_sweet":           (0,    300),
-    "mnt_gold":            (0,    400),
-    "num_web_purchases":   (0,    27),     
-    "num_store_purchases": (0,    20),
-    "num_catalog":         (0,    30),
-    "num_deals":           (0,    15),
-    "num_web_visits":      (0,    20),
-    "campaigns_accepted":  (0,    6),
-
+        "income":              (0,    200000),  
+        "age":                 (18,   100),
+        "recency":             (0,    99),      
+        "total_children":      (0,    5),
+        "tenure_days":         (0,    700),     
+        "mnt_wines":           (0,    1500),
+        "mnt_fruits":          (0,    200),
+        "mnt_meat":            (0,    1500),
+        "mnt_fish":            (0,    300),
+        "mnt_sweet":           (0,    300),
+        "mnt_gold":            (0,    400),
+        "num_web_purchases":   (0,    27),     
+        "num_store_purchases": (0,    20),
+        "num_catalog":         (0,    30),
+        "num_deals":           (0,    15),
+        "num_web_visits":      (0,    20),
+        "campaigns_accepted":  (0,    6),
     }
 
     for field, (min_val, max_val) in ranges.items():
         value = data[field]
         if value < min_val or value > max_val:
             return f"'{field}' must be between {min_val} and {max_val}, got {value}"
+
+    # ── Level 3.5: Categorical validation ──
+    VALID_MARITAL_STATUS = ["Partnered", "Single", "Widow"]
+    VALID_EDUCATION_GROUP = ["Postgraduate", "Undergraduate", "Other"]
+    
+    if data["marital_status"] not in VALID_MARITAL_STATUS:
+        return f"'marital_status' must be one of {VALID_MARITAL_STATUS}, got '{data['marital_status']}'"
+    
+    if data["education_group"] not in VALID_EDUCATION_GROUP:
+        return f"'education_group' must be one of {VALID_EDUCATION_GROUP}, got '{data['education_group']}'"
         
-    return None     # ← None means no error, everything is valid
+    return None  # ← None means no error, everything is valid
+
 
 @app.route("/", methods=["GET"])
 def health():
@@ -112,7 +131,7 @@ def predict():
     
     # ── Run all validations ──
     error = validate_input(data)
-    if error :
+    if error:
         return jsonify({"error": error}), 400
 
 
@@ -132,6 +151,16 @@ def predict():
     total_spending        = mnt_wines + mnt_fruits + mnt_meat + mnt_fish + mnt_sweet + mnt_gold
     total_purchases       = num_web + num_store + num_catalog + num_deals
     spending_per_purchase = total_spending / (total_purchases + 1)
+
+    # ── Dynamic one-hot encoding for categoricals ──
+    marital_status = data["marital_status"]
+    education_group = data["education_group"]
+    
+    marital_partnered = 1 if marital_status == "Partnered" else 0
+    marital_single = 1 if marital_status == "Single" else 0
+    marital_widow = 1 if marital_status == "Widow" else 0
+    education_postgrad = 1 if education_group == "Postgraduate" else 0
+    education_undergrad = 1 if education_group == "Undergraduate" else 0
 
     # ── Build input DataFrame with log transforms on spending columns ──
     input_data = pd.DataFrame([[
@@ -155,7 +184,8 @@ def predict():
         total_purchases,
         total_spending,
         spending_per_purchase,
-        1, 0, 0, 0, 0
+        marital_partnered, marital_single, marital_widow,  # ← DYNAMIC NOW
+        education_postgrad, education_undergrad  # ← DYNAMIC NOW
     ]], columns=FEATURE_COLUMNS)
 
     # ── Pipeline: scale → PCA → predict ──
@@ -177,3 +207,4 @@ def predict():
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000, use_reloader=False)
+    
