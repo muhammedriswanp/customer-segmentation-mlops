@@ -184,8 +184,8 @@ def predict():
         total_purchases,
         total_spending,
         spending_per_purchase,
-        marital_partnered, marital_single, marital_widow,  # ← DYNAMIC NOW
-        education_postgrad, education_undergrad  # ← DYNAMIC NOW
+        marital_partnered, marital_single, marital_widow,
+        education_postgrad, education_undergrad  
     ]], columns=FEATURE_COLUMNS)
 
     # ── Pipeline: scale → PCA → predict ──
