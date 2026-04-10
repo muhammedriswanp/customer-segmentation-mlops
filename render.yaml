@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: customer-segmentation-fastapi
+    env: docker
+    dockerfilePath: ./Dockerfile.fastapi  
+    dockerContext: .
+    region: singapore  
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: 8000
