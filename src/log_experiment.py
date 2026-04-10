@@ -74,3 +74,10 @@ print("All runs logged!")
 # Save best model
 joblib.dump(best_model, 'models/best_model.pkl')
 print(f"Best score: {best_score}")
+
+
+
+# best for when using port is used , mlflow server --host 127.0.0.1 --port 5000
+# model = mlflow.pyfunc.load_model("models:/customer-segmentation/champion")
+# mlflow models serve -m "models:/customer-segmentation/champion" -p 5001, This starts a REST API server that serves your model.
+
