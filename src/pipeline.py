@@ -27,9 +27,10 @@ def run_pipeline(input_path, output_path):
     X_pca, pca = apply_pca(X_scaled)
 
     print("Clustering...")
-    model = joblib.load('models/kmeans_model.pkl')
+    from sklearn.cluster import KMeans
+    model = KMeans(n_clusters=3, random_state=42, n_init=10)
     labels = model.fit_predict(X_pca)
-
+    
     df['Cluster'] = labels
 
     print("Saving models...")
