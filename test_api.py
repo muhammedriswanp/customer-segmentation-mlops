@@ -1,6 +1,6 @@
 import requests
 
-url = "http://127.0.0.1:5000/predict"
+url = "https://customer-segmentation-fastapi.onrender.com/predict"
 
 # ── Test Case 1: High Value Loyalist ──
 payload_1 = {

@@ -92,3 +92,44 @@ docker run -v ${PWD}/models:/app/models -p 5000:5000 customer-segmentation-api
 # Run Streamlit app
 python -m streamlit run app.py
 ```
+
+## 🚀 CI/CD Pipeline
+
+### Automated Deployment
+
+This project uses GitHub Actions for continuous deployment to Render.
+
+**Workflow**: `.github/workflows/deploy.yml`
+
+**Triggers**:
+- Push to `main` branch
+- Changes to: `fastapi_app.py`, `Dockerfile.fastapi`, `requirements.txt`, `models/`
+
+**Pipeline Steps**:
+1. ✅ Run tests (model loading, app import)
+2. ✅ Trigger Render deployment
+3. ✅ Verify deployment
+
+### Automated Model Retraining (Optional)
+
+**Workflow**: `.github/workflows/retrain.yml`
+
+**Triggers**:
+- Push to `main` with changes to `data/` or `train.py`
+- Manual trigger via GitHub Actions UI
+
+**Pipeline Steps**:
+1. ✅ Retrain model with new data
+2. ✅ Commit updated models
+3. ✅ Trigger deployment
+
+### Manual Deployment
+
+To manually trigger deployment:
+1. Go to [GitHub Actions](https://github.com/muhammedriswanp/customer-segmentation-mlops/actions)
+2. Select "Deploy to Render" workflow
+3. Click "Run workflow"
+
+### Deployment Status
+
+[![Deploy to Render](https://github.com/muhammedriswanp/customer-segmentation-mlops/actions/workflows/deploy.yml/badge.svg)](https://github.com/muhammedriswanp/customer-segmentation-mlops/actions/workflows/deploy.yml)

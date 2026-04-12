@@ -33,9 +33,9 @@ def run_pipeline(input_path, output_path):
     df['Cluster'] = labels
 
     print("Saving models...")
-    joblib.dump(scaler, 'outputs/models/scaler.pkl')
-    joblib.dump(pca, "outputs/models/pca.pkl")
-    joblib.dump(model, "outputs/models/best_model.pkl")
+    joblib.dump(scaler, 'models/scaler.pkl')
+    joblib.dump(pca, "models/pca.pkl")
+    joblib.dump(model, "models/kmeans_model.pkl")
 
     print("Saving results...")
     df.to_csv(output_path, index=False)
