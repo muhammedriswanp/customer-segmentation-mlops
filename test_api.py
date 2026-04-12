@@ -4,9 +4,16 @@ import time
 url = "https://customer-segmentation-fastapi.onrender.com/predict"
 
 print("Warming up API...")
-requests.get(f"{url}/")
-time.sleep(5)  # wait for it to wake up
-
+for i in range(6):
+    try:
+        r = requests.get("https://customer-segmentation-fastapi.onrender.com/")
+        if r.status_code == 200:
+            print("API is ready!")
+            break
+    except:
+        pass
+    print(f"Waiting... ({(i+1)*10}s)")
+    time.sleep(10)
 
 # ── Test Case 1: High Value Loyalist ──
 payload_1 = {

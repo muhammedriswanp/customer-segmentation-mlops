@@ -27,7 +27,7 @@ def run_pipeline(input_path, output_path):
     X_pca, pca = apply_pca(X_scaled)
 
     print("Clustering...")
-    model = joblib.load('models/best_model.pkl')
+    model = joblib.load('models/kmeans_model.pkl')
     labels = model.fit_predict(X_pca)
 
     df['Cluster'] = labels
