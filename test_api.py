@@ -1,6 +1,12 @@
 import requests
+import time
 
 url = "https://customer-segmentation-fastapi.onrender.com/predict"
+
+print("Warming up API...")
+requests.get(f"{url}/")
+time.sleep(5)  # wait for it to wake up
+
 
 # ── Test Case 1: High Value Loyalist ──
 payload_1 = {
