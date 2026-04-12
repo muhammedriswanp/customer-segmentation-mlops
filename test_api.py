@@ -1,7 +1,7 @@
 import requests
 import time
 
-url = "http://localhost:5000/predict"
+url = "http://localhost:8000/predict"
 
 # ── Test Case 1: High Value Loyalist ──
 payload_1 = {
