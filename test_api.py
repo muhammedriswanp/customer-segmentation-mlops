@@ -1,7 +1,7 @@
 import requests
 import time
 
-url = "http://localhost:8000/predict"
+url = "https://customer-segmentation-fastapi.onrender.com/predict"
 
 # ── Test Case 1: High Value Loyalist ──
 payload_1 = {

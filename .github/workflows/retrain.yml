@@ -38,12 +38,12 @@ jobs:
     - name: Retrain model
       run: |
         echo "🔄 Starting model retraining..."
-        python train.py  # Your training script
+        python train.py  
         echo "✅ Model retraining complete"
     
     - name: Commit new models
       run: |
-        git add models/*.pkl
+        git add models/*.pkl 
         git diff --staged --quiet || git commit -m "🤖 Auto-retrain: Update models [skip ci]"
         git push
       env:
