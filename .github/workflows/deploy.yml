@@ -5,50 +5,50 @@ on:
     branches:
       - main
     paths:
-      - 'fastapi_app.py'
-      - 'Dockerfile.fastapi'
-      - 'requirements.txt'
-      - 'models/**'
-      - '.github/workflows/deploy.yml'
+      - "fastapi_app.py"
+      - "Dockerfile.fastapi"
+      - "requirements.txt"
+      - "models/**"
+      - ".github/workflows/deploy.yml"
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Set up Python   #Another pre-built GitHub Action
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'    #Install Python 3.11 specifically
-    
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip   
-        pip install -r requirements.txt
 
-    - name: Run basic tests
-      run: |
-        # Test that models can be loaded
-        python -c "import joblib; joblib.load('models/scaler.pkl'); print('✅ Models loaded')"
-        
-        # Test FastAPI app imports
-        python -c "from fastapi_app import app; print('✅ FastAPI app imports successfully')"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python #Another pre-built GitHub Action
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11" #Install Python 3.11 specifically
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip   
+          pip install -r requirements.txt
+
+      - name: Run basic tests
+        run: |
+          # Test that models can be loaded
+          python -c "import joblib; joblib.load('models/scaler.pkl'); print('✅ Models loaded')"
+
+          # Test FastAPI app imports
+          python -c "from fastapi_app import app; print('✅ FastAPI app imports successfully')"
 
   deploy:
     needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     #  only deploy if the push is to main branch specifically. Prevents deploying from other branches accidentally.
-    
+
     steps:
-    - name: Trigger Render Deploy
-      run: |
-        curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
-    
-    - name: Wait for deployment
-      run: |
-        echo "⏳ Deployment triggered. Check Render dashboard for status."
-        echo "🔗 https://dashboard.render.com/"
+      - name: Trigger Render Deploy
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+
+      - name: Wait for deployment
+        run: |
+          echo "⏳ Deployment triggered. Check Render dashboard for status."
+          echo "🔗 https://dashboard.render.com/"

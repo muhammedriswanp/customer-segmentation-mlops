@@ -180,5 +180,5 @@ print("Status:", response.status_code)
 print("Response:", response.json())
 
 print("\n" + "=" * 60)
-print("✅ All tests completed!")
+print("All tests completed!")
 print("=" * 60)

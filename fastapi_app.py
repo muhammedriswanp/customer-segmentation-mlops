@@ -35,7 +35,7 @@ CLUSTER_INFO = {
     0: "Budget Conscious Families",
     1: "High Value Loyalists",
     2: "Middle Class Actives"
-}
+    }
 
 # ── Pydantic Input Model ──
 class CustomerInput(BaseModel):

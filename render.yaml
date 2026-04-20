@@ -1,6 +1,6 @@
 # infrastructure
-services:
-  - type: web
+services:   # "create these services for me"
+  - type: web   #a web server that handles HTTP requests 
     name: customer-segmentation-fastapi
     env: docker
     dockerfilePath: ./Dockerfile.fastapi  
