@@ -44,7 +44,7 @@ jobs:
       - name: Commit new models
         run: |
           git add models/*.pkl 
-          git diff --staged --quiet || git commit -m "🤖 Auto-retrain: Update models [skip ci]"
+          git diff --staged --quiet || git commit -m "Auto-retrain: Update models [skip ci]"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
